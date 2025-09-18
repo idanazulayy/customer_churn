@@ -110,7 +110,6 @@ def train_model(model_choice: str, train_df: pd.DataFrame):
         auc = roc_auc_score(y_test, model.predict_proba(X_test_proc)[:, 1])
 
         # שמירת preprocessor ומודל
-        joblib.dump({"preprocessor": preprocessor}, "../preprocessing/bank/bank_preprocessor_data.pkl")
         joblib.dump(model, "../new_models/bank_model.pkl")
 
         return model, auc
@@ -139,7 +138,6 @@ def train_model(model_choice: str, train_df: pd.DataFrame):
 
         auc = roc_auc_score(y_test, model.predict_proba(X_test_proc)[:, 1])
 
-        joblib.dump({"preprocessor": preprocessor}, "../preprocessing/telecom/telecom_preprocessor_data.pkl")
         joblib.dump(model, "../new_models/telecom_model.pkl")
 
         return model, auc
@@ -169,7 +167,7 @@ def load_all_models():
     """טוען את כל המודלים והנתונים הנלווים כדי למנוע טעינה חוזרת."""
     models = {
         "Telco": joblib.load("../saved_models/telco.pkl"),
-        "Bank": joblib.load("../saved_models/bank.pkl"),
+        "Bank": joblib.load("../saved_models/bank2.pkl"),
         "Telecom": joblib.load("../saved_models/telecom.pkl")
     }
     # טעינת קבצי ה-X_test ו-y_test שהועלו
