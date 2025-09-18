@@ -66,7 +66,6 @@ h1, h2, h3, h4, h5, h6 {
 </style>
 """
 st.markdown(rtl_style, unsafe_allow_html=True)
-st.session_state.clear()
 
 
 def train_model(model_choice: str, train_df: pd.DataFrame):
@@ -512,9 +511,10 @@ elif page == "🔮 חיזוי עבור לקוח בודד":
         # טופס עבור Bank
         col1, col2, col3 = st.columns(3)
         with col1:
-            credit_score = st.slider("ניקוד אשראי", 300, 850, 600)
-            age = st.slider("גיל", 18, 100, 40)
-            tenure = st.slider("ותק בחשבון (שנים)", 0, 10, 3)
+            credit_score = st.number_input("יתרה בחשבון", value=350)
+            age = st.number_input("יתרה בחשבון", value=25)
+            tenure = st.number_input("יתרה בחשבון", value=3)
+
         with col2:
             balance = st.number_input("יתרה בחשבון", value=60000.0)
             products_number = st.selectbox("מספר מוצרים", [1, 2, 3, 4])
@@ -565,8 +565,9 @@ elif page == "🔮 חיזוי עבור לקוח בודד":
         predict_func = predict_telecom_churn
 
     if st.button("🔮 בצע חיזוי", key=f"predict_{model_choice}"):
+        st.write("לחצן נלחץ!")  # במקום print
         prediction, probability = predict_func(new_customer_df)
-
+        print(prediction)
         churn_status = "נוטש" if prediction == 1 else "לא נוטש"
         color = "red" if prediction == 1 else "green"
 
@@ -626,8 +627,6 @@ elif page == "🔮 חיזוי עבור לקוח בודד":
                 show=False
             )
             st.pyplot(fig)
-
-
 
 # ------------------------------------------------
 # עמוד העלאת קובץ
