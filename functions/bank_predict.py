@@ -1,10 +1,14 @@
 import joblib
 import pandas as pd
+
 import os
+def get_path(relative_path):
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    return os.path.join(base_dir, relative_path)
 
 # --- שם הקובץ של המודל וה-preprocessor ---
-MODEL_FILE_NAME = "../saved_models/bank.pkl"
-PREPROCESSOR_FILE_NAME = "../preprocessing/bank/bank_preprocessor_data.pkl"
+MODEL_FILE_NAME = get_path("saved_models/bank.pkl")
+PREPROCESSOR_FILE_NAME = get_path("preprocessing/bank/bank_preprocessor_data.pkl")
 
 
 def predict_bank_churn(new_data: pd.DataFrame) -> tuple:

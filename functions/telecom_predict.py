@@ -1,10 +1,13 @@
 import joblib
 import pandas as pd
 import numpy as np
-
+import os
+def get_path(relative_path):
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    return os.path.join(base_dir, relative_path)
 # --- הגדרת שמות הקבצים ---
-MODEL_FILE_NAME = "../saved_models/telecom.pkl"
-PREPROCESSOR_DATA_FILE = "../preprocessing/telecom/telecom_preprocessor_data.pkl"
+MODEL_FILE_NAME = get_path("saved_models/telecom.pkl")
+PREPROCESSOR_DATA_FILE = get_path("preprocessing/telecom/telecom_preprocessor_data.pkl")
 
 
 def predict_telecom_churn(new_data: pd.DataFrame) -> tuple:

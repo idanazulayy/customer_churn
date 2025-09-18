@@ -2,12 +2,15 @@ import joblib
 import pandas as pd
 import json
 import numpy as np
-
+import os
+def get_path(relative_path):
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    return os.path.join(base_dir, relative_path)
 # --- הגדרת שמות הקבצים ---
-MODEL_FILE_NAME = "../saved_models/telco.pkl"
-SCALER_FILE_NAME = "../preprocessing/telco/telco_scaler.pkl"
-NUMERICAL_COLS_FILE = "../preprocessing/telco/telco_numerical_cols.json"
-FINAL_COLS_FILE = "../preprocessing/telco/telco_columns.json"
+MODEL_FILE_NAME = get_path("saved_models/telco.pkl")
+SCALER_FILE_NAME = get_path("preprocessing/telco/telco_scaler.pkl")
+NUMERICAL_COLS_FILE = get_path("preprocessing/telco/telco_numerical_cols.json")
+FINAL_COLS_FILE = get_path("preprocessing/telco/telco_columns.json")
 
 
 def fe_total_charges(df, col='TotalCharges', n_bins=15):
