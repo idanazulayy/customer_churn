@@ -1,0 +1,12 @@
+numpy~=2.0.2
+xgboost~=2.1.4
+kagglehub~=0.3.12
+pandas~=2.3.2
+matplotlib~=3.9.4
+seaborn~=0.13.2
+scikit-learn~=1.6.1
+joblib~=1.5.1
+streamlit~=1.49.1
+shap~=0.48.0
+datasets~=4.0.0
+imbalanced-learn~=0.12.4
