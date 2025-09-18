@@ -22,7 +22,10 @@ from functions.telco_predict import fe_total_charges
 from functions.telco_predict import predict_telco_churn
 from functions.bank_predict import predict_bank_churn
 from functions.telecom_predict import predict_telecom_churn
-
+# פונקציה שמקבלת נתיב יחסי ומחזירה נתיב מוחלט
+def get_path(relative_path):
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    return os.path.join(base_dir, relative_path)
 # ------------------------------------------------
 # הגדרות ראשוניות של העמוד
 # ------------------------------------------------
@@ -78,7 +81,7 @@ def train_model(model_choice: str, train_df: pd.DataFrame):
     """
     if model_choice == "Bank":
         # טעינת preprocessor קיים
-        preprocessor = joblib.load("../preprocessing/bank/bank_preprocessor_data.pkl")['preprocessor']
+        preprocessor = joblib.load(get_path("preprocessing/bank/bank_preprocessor_data.pkl"))['preprocessor']
 
         X_train = train_df.drop(columns=['churn'])
         y_train = train_df['churn']
@@ -109,12 +112,12 @@ def train_model(model_choice: str, train_df: pd.DataFrame):
         auc = roc_auc_score(y_test, model.predict_proba(X_test_proc)[:, 1])
 
         # שמירת preprocessor ומודל
-        joblib.dump(model, "../new_models/bank_model.pkl")
+        joblib.dump(model, get_path("new_models/bank_model.pkl"))
 
         return model, auc
 
     elif model_choice == "Telecom":
-        preprocessor = joblib.load("../preprocessing/telecom/telecom_preprocessor_data.pkl")['preprocessor']
+        preprocessor = joblib.load(get_path("preprocessing/telecom/telecom_preprocessor_data.pkl"))['preprocessor']
 
         X_train = train_df.drop(columns=['Churn'])
         y_train = train_df['Churn']
@@ -137,7 +140,7 @@ def train_model(model_choice: str, train_df: pd.DataFrame):
 
         auc = roc_auc_score(y_test, model.predict_proba(X_test_proc)[:, 1])
 
-        joblib.dump(model, "../new_models/telecom_model.pkl")
+        joblib.dump(model, get_path("new_models/telecom_model.pkl"))
 
         return model, auc
 
@@ -165,15 +168,15 @@ new_models_trained = {}
 def load_all_models():
     """טוען את כל המודלים והנתונים הנלווים כדי למנוע טעינה חוזרת."""
     models = {
-        "Telco": joblib.load("../saved_models/telco.pkl"),
-        "Bank": joblib.load("../saved_models/bank2.pkl"),
-        "Telecom": joblib.load("../saved_models/telecom.pkl")
+        "Telco": joblib.load(get_path("saved_models/telco.pkl")),
+        "Bank": joblib.load(get_path("saved_models/bank2.pkl")),
+        "Telecom": joblib.load(get_path("saved_models/telecom.pkl"))
     }
     # טעינת קבצי ה-X_test ו-y_test שהועלו
     test_data = {
-        "Telco": (pd.read_csv("../data/telco_X_test.csv"), pd.read_csv("../data/telco_y_test.csv")),
-        "Bank": (pd.read_csv("../data/bank_X_test.csv"), pd.read_csv("../data/bank_y_test.csv")),
-        "Telecom": (pd.read_csv("../data/telecom_X_test.csv"), pd.read_csv("../data/telecom_y_test.csv"))
+        "Telco": (pd.read_csv(get_path("data/telco_X_test.csv")), pd.read_csv(get_path("data/telco_y_test.csv"))),
+        "Bank": (pd.read_csv(get_path("data/bank_X_test.csv")), pd.read_csv(get_path("data/bank_y_test.csv"))),
+        "Telecom": (pd.read_csv(get_path("data/telecom_X_test.csv")), pd.read_csv(get_path("data/telecom_y_test.csv")))
     }
 
     # --- ביצוע preprocessing לכל נתוני המבחן ---
@@ -181,10 +184,10 @@ def load_all_models():
     telco_X_test_raw, telco_y_test = test_data["Telco"]
     from functions.telco_predict import fe_total_charges
 
-    telco_scaler = joblib.load("../preprocessing/telco/telco_scaler.pkl")
-    with open("../preprocessing/telco/telco_numerical_cols.json", 'r') as f:
+    telco_scaler = joblib.load(get_path("preprocessing/telco/telco_scaler.pkl"))
+    with open(get_path("preprocessing/telco/telco_numerical_cols.json"), 'r') as f:
         numerical_cols_to_scale = json.load(f)
-    with open("../preprocessing/telco/telco_columns.json", 'r') as f:
+    with open(get_path("preprocessing/telco/telco_columns.json"), 'r') as f:
         final_columns = json.load(f)
 
     telco_X_test_proc = telco_X_test_raw.copy()
@@ -231,7 +234,7 @@ def load_all_models():
 
     # Bank
     bank_X_test_raw, bank_y_test = test_data["Bank"]
-    bank_preprocessor_data = joblib.load("../preprocessing/bank/bank_preprocessor_data.pkl")
+    bank_preprocessor_data = joblib.load(get_path("preprocessing/bank/bank_preprocessor_data.pkl"))
     bank_preprocessor = bank_preprocessor_data['preprocessor']
     bank_X_test_proc = bank_preprocessor.transform(bank_X_test_raw)
     bank_y_test = bank_y_test.iloc[:, 0]
@@ -239,7 +242,7 @@ def load_all_models():
 
     # Telecom
     telecom_X_test_raw, telecom_y_test = test_data["Telecom"]
-    telecom_preprocessor_data = joblib.load("../preprocessing/telecom/telecom_preprocessor_data.pkl")
+    telecom_preprocessor_data = joblib.load(get_path("preprocessing/telecom/telecom_preprocessor_data.pkl"))
     telecom_preprocessor = telecom_preprocessor_data["preprocessor"]
     telecom_X_test_proc = telecom_preprocessor.transform(telecom_X_test_raw)
     telecom_y_test = telecom_y_test.iloc[:, 0]
@@ -252,17 +255,17 @@ def load_all_models():
 def load_eda_data():
     """טוען את ה-DataFrame המלא עבור ה-EDA מהקבצים הקיימים."""
     try:
-        telco_X_test = pd.read_csv("../data/telco_X_test.csv")
-        telco_y_test = pd.read_csv("../data/telco_y_test.csv").iloc[:, 0]
+        telco_X_test = pd.read_csv(get_path("data/telco_X_test.csv"))
+        telco_y_test = pd.read_csv(get_path("data/telco_y_test.csv")).iloc[:, 0]
         telco_df_eda = pd.concat([telco_X_test, telco_y_test], axis=1)
 
-        bank_X_test = pd.read_csv("../data/bank_X_test.csv")
-        bank_y_test = pd.read_csv("../data/bank_y_test.csv").iloc[:, 0]
+        bank_X_test = pd.read_csv(get_path("data/bank_X_test.csv"))
+        bank_y_test = pd.read_csv(get_path("data/bank_y_test.csv")).iloc[:, 0]
         bank_df_eda = pd.concat([bank_X_test, bank_y_test], axis=1)
         bank_df_eda.rename(columns={'Exited': 'churn'}, inplace=True)
 
-        telecom_X_test = pd.read_csv("../data/telecom_X_test.csv")
-        telecom_y_test = pd.read_csv("../data/telecom_y_test.csv").iloc[:, 0]
+        telecom_X_test = pd.read_csv(get_path("data/telecom_X_test.csv"))
+        telecom_y_test = pd.read_csv(get_path("data/telecom_y_test.csv")).iloc[:, 0]
         telecom_df_eda = pd.concat([telecom_X_test, telecom_y_test], axis=1)
         telecom_df_eda.rename(columns={'Churn': 'Churn'}, inplace=True)
 
@@ -583,11 +586,11 @@ elif page == "🔮 חיזוי עבור לקוח בודד":
 
             # טעינת ה-preprocessor המתאים
             if model_choice == "Bank":
-                preprocessor = joblib.load("../preprocessing/bank/bank_preprocessor_data.pkl")['preprocessor']
+                preprocessor = joblib.load(get_path("preprocessing/bank/bank_preprocessor_data.pkl"))['preprocessor']
                 processed_data = preprocessor.transform(new_customer_df)
                 feature_names = preprocessor.get_feature_names_out()
             elif model_choice == "Telecom":
-                preprocessor = joblib.load("../preprocessing/telecom/telecom_preprocessor_data.pkl")['preprocessor']
+                preprocessor = joblib.load(get_path("preprocessing/telecom/telecom_preprocessor_data.pkl"))['preprocessor']
                 processed_data = preprocessor.transform(new_customer_df)
                 feature_names = preprocessor.get_feature_names_out()
             else:  # Telco (שם אין preprocessor מאוחד)
